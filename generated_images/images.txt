@@ -1,0 +1,10 @@
+file 'generated_images\frame_1.png'
+duration 1
+file 'generated_images\frame_2.png'
+duration 1
+file 'generated_images\frame_3.png'
+duration 1
+file 'generated_images\frame_4.png'
+duration 1
+file 'generated_images\frame_5.png'
+duration 1

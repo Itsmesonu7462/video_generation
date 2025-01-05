@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Video Generator</title>
+  <style>
+    canvas { display: block; background: black; }
+    body { margin: 0; overflow: hidden; }
+  </style>
+</head>
+<body>
+  <input type="file" id="audioFile" accept="audio/*" style="position: absolute; top: 10px; left: 10px;">
+  <canvas id="canvas"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const fileInput = document.getElementById('audioFile');
+    let audioCtx, analyser, dataArray, source, audio;
+    const frames = []; // Store frames as base64 strings
+
+    fileInput.addEventListener('change', () => {
+      const audioFile = fileInput.files[0];
+      audio = new Audio(URL.createObjectURL(audioFile));
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 256;
+
+      source = audioCtx.createMediaElementSource(audio);
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+      audio.play();
+      renderVisuals();
+    });
+
+    function renderVisuals() {
+      analyser.getByteFrequencyData(dataArray);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const barWidth = canvas.width / dataArray.length;
+      let x = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        const barHeight = dataArray[i] * 2;
+        ctx.fillStyle = `rgb(${barHeight + 50}, 50, ${255 - barHeight})`;
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        x += barWidth + 1;
+      }
+
+      frames.push(canvas.toDataURL("image/png")); // Save frame
+      if (!audio.paused) requestAnimationFrame(renderVisuals);
+    }
+  </script>
+</body>
+</html>
