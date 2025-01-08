@@ -1,4 +1,5 @@
-# video_generation# Video Generation Project
+# video_generation
+# Video Generation Project
 
 ## Overview
 This project is designed to generate videos from user-provided text prompts and music files. It utilizes a text-to-image model (Stable Diffusion) to create a sequence of images based on a given prompt and combines them with a provided audio track to produce a cohesive video.
